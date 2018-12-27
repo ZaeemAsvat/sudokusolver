@@ -9,14 +9,14 @@ public class Main {
 
     private static final int boardWithAndHeight = 9;
     private static final int[][] board = new int[boardWithAndHeight][boardWithAndHeight];
-    private static final ArrayList<ArrayList<HashSet<Integer>>> possibleSolutions = new ArrayList<>(boardWithAndHeight);
+    private static ArrayList<ArrayList<HashSet<Integer>>> possibleSolutions = new ArrayList<>(boardWithAndHeight);
 
     public static void main(String[] args) throws IOException {
 	// write your code here
 
         fillPossibleSolutionsBoard();
 
-        File file = new File("");
+        File file = new File("/home/zaeemasvat_/IdeaProjects/sudokosolver/src/sample.txt");
 
         BufferedReader in = new BufferedReader(new FileReader(file));
         for (int row = 0; row < boardWithAndHeight; row++) {
@@ -25,6 +25,9 @@ public class Main {
 
                 String[] strArrLine = in.readLine().split(" ");
                 for (int col = 0; col < boardWithAndHeight; col++) {
+
+                    if (strArrLine[col].equals("_"))
+                        strArrLine[col] = "-1";
 
                     board[row][col] = Integer.parseInt(strArrLine[col]);
 
@@ -43,13 +46,17 @@ public class Main {
                 e.printStackTrace();
             }
         }
+
+        removeTrivalImpossibleSolutions();
+
+
     }
 
     private static void fillPossibleSolutionsBoard () {
         for (int row = 0; row < boardWithAndHeight; row++) {
-            possibleSolutions.set(row, new ArrayList<>(boardWithAndHeight));
+            possibleSolutions.add(new ArrayList<>(boardWithAndHeight));
             for (int col = 0; col < boardWithAndHeight; col++) {
-                possibleSolutions.get(row).set(col, new HashSet<>(boardWithAndHeight));
+                possibleSolutions.get(row).add(new HashSet<>(boardWithAndHeight));
                 for (int i = 0; i < boardWithAndHeight; i++)
                     possibleSolutions.get(row).get(col).add(i + 1);
             }
@@ -77,8 +84,8 @@ public class Main {
                     // remove this number from all possible solution sets of cells
                     // in the same block as this cell
                     SubRange thisBlockRange = getSubRange(row, col);
-                    for (int r = thisBlockRange.getStartRow(); r <= thisBlockRange.getEndRow(); r++)
-                        for (int c = thisBlockRange.getStartCol(); c <= thisBlockRange.getEndCol(); c++)
+                    for (int r = thisBlockRange.getStartRow(); r < thisBlockRange.getEndRow(); r++)
+                        for (int c = thisBlockRange.getStartCol(); c < thisBlockRange.getEndCol(); c++)
                             possibleSolutions.get(r).get(c).remove(board[row][col]);
 
                 }
