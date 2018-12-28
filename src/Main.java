@@ -30,9 +30,6 @@ public class Main {
                         strArrLine[col] = "-1";
 
                     board[row][col] = Integer.parseInt(strArrLine[col]);
-
-                    if (board[row][col] != -1)
-                        possibleSolutions.get(row).get(col).remove(board[row][col]);
                 }
 
             } catch (NullPointerException e) {
@@ -47,7 +44,8 @@ public class Main {
             }
         }
 
-        removeTrivalImpossibleSolutions();
+        removeAllTrivialImpossibleSolutionsAndFillInAllCurrentTrivialSolutions();
+        printBoard();
 
 
     }
@@ -56,40 +54,93 @@ public class Main {
         for (int row = 0; row < boardWithAndHeight; row++) {
             possibleSolutions.add(new ArrayList<>(boardWithAndHeight));
             for (int col = 0; col < boardWithAndHeight; col++) {
-                possibleSolutions.get(row).add(new HashSet<>(boardWithAndHeight));
-                for (int i = 0; i < boardWithAndHeight; i++)
-                    possibleSolutions.get(row).get(col).add(i + 1);
+                if (board[row][col] != -1) {
+                    possibleSolutions.get(row).add(new HashSet<>(boardWithAndHeight));
+                    for (int i = 0; i < boardWithAndHeight; i++)
+                        possibleSolutions.get(row).get(col).add(i + 1);
+                }
             }
+        }
+    }
+
+    private static void removeAllTrivialImpossibleSolutionsAndFillInAllCurrentTrivialSolutions() {
+
+        removeTrivalImpossibleSolutions();
+
+        ArrayList<CellIndex> cellIndicesWithOnlyOnePossibleSolution = findAllCellsWhichHaveOnlyOnePossibleSolution();
+        while (!cellIndicesWithOnlyOnePossibleSolution.isEmpty()) {
+
+            for (CellIndex cellIndex : cellIndicesWithOnlyOnePossibleSolution) {
+
+                // this cell only has one possible solution, so we set the cell
+                // with the first number in its possible solutions list (since it's the only solution)
+                board[cellIndex.getRow()][cellIndex.getCol()] = possibleSolutions.get(cellIndex.getRow()).get(cellIndex.getCol()).iterator().next();
+
+                // clear this cells possible solutions list, it's no longer needed
+                possibleSolutions.get(cellIndex.getRow()).get(cellIndex.getCol()).clear();
+
+                // remove this cells solution value from all solutions sets of its relations
+                removeThisCellsSolutionFromAllSolutionSetsOfItsRelations(cellIndex.getRow(), cellIndex.getCol());
+            }
+
+            // some possible solutions could have been removed from various unfilled cells, which
+            // may leave some cells with only one solution, so that we can fill them in in the next loop
+            cellIndicesWithOnlyOnePossibleSolution = findAllCellsWhichHaveOnlyOnePossibleSolution();
         }
     }
 
     private static void removeTrivalImpossibleSolutions () {
 
-        for (int row = 0; row < boardWithAndHeight; row++) {
-            for (int col = 0; col < boardWithAndHeight; col++) {
+        for (int row = 0; row < boardWithAndHeight; row++)
+            for (int col = 0; col < boardWithAndHeight; col++)
+                removeThisCellsSolutionFromAllSolutionSetsOfItsRelations(row, col);
+    }
 
-                // if cell isn't blank (there is a number already filled in this cell)
-                if (board[row][col] != -1) {
+    private static void removeThisCellsSolutionFromAllSolutionSetsOfItsRelations(int cellRow, int cellCol) {
 
-                    // remove this number from all possible solution sets of cells
-                    // in the same row as this cell
-                    for (int c = 0; c < boardWithAndHeight; c++)
-                        possibleSolutions.get(row).get(c).remove(board[row][col]);
+        // if cell isn't blank (there is a number already filled in this cell)
+        if (board[cellRow][cellCol] != -1) {
 
-                    // remove this number from all possible solution sets of cells
-                    // in the same column as this cell
-                    for (int r = 0; r < boardWithAndHeight; r++)
-                        possibleSolutions.get(r).get(col).remove(board[row][col]);
+            // remove this number from all possible solution sets of blank cells
+            // in the same row as this cell
+            for (int c = 0; c < boardWithAndHeight; c++)
+                if (board[cellRow][c] == -1)
+                    possibleSolutions.get(cellRow).get(c).remove(board[cellRow][cellCol]);
 
-                    // remove this number from all possible solution sets of cells
-                    // in the same block as this cell
-                    SubRange thisBlockRange = getSubRange(row, col);
-                    for (int r = thisBlockRange.getStartRow(); r < thisBlockRange.getEndRow(); r++)
-                        for (int c = thisBlockRange.getStartCol(); c < thisBlockRange.getEndCol(); c++)
-                            possibleSolutions.get(r).get(c).remove(board[row][col]);
+            // remove this number from all possible solution sets of blank cells
+            // in the same column as this cell
+            for (int r = 0; r < boardWithAndHeight; r++)
+                if (board[r][cellCol] == -1)
+                    possibleSolutions.get(r).get(cellCol).remove(board[cellRow][cellCol]);
 
-                }
-            }
+            // remove this number from all possible solution sets of cells
+            // in the same block as this cell
+            SubRange thisBlockRange = getSubRange(cellRow, cellCol);
+            for (int r = thisBlockRange.getStartRow(); r < thisBlockRange.getEndRow(); r++)
+                for (int c = thisBlockRange.getStartCol(); c < thisBlockRange.getEndCol(); c++)
+                    if (board[r][c] == -1)
+                        possibleSolutions.get(r).get(c).remove(board[cellRow][cellCol]);
+
+        }
+    }
+
+    private static ArrayList<CellIndex> findAllCellsWhichHaveOnlyOnePossibleSolution() {
+
+        ArrayList<CellIndex> cellIndicesWithOnlyOnePossibleSolutiom = new ArrayList<>();
+
+        for (int row = 0; row < boardWithAndHeight; row++)
+            for (int col = 0; col < boardWithAndHeight; col++)
+                if (board[row][col] == -1 && possibleSolutions.get(row).get(col).size() == 1)
+                    cellIndicesWithOnlyOnePossibleSolutiom.add(new CellIndex(row, col));
+
+        return cellIndicesWithOnlyOnePossibleSolutiom;
+    }
+
+    private static void printBoard() {
+        for (int[] row : board) {
+            for (int number : row)
+                System.out.print((number == -1 ? "_" : number) + " ");
+            System.out.println();
         }
     }
 
