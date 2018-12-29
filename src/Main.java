@@ -3,6 +3,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class Main {
@@ -16,7 +18,7 @@ public class Main {
 
         fillPossibleSolutionsBoard();
 
-        File file = new File("/home/zaeemasvat_/IdeaProjects/sudokosolver/src/sample.txt");
+        File file = new File("/home/zaeemasvat_/IdeaProjects/sudokosolver/src/medium.txt");
 
         BufferedReader in = new BufferedReader(new FileReader(file));
         for (int row = 0; row < boardWithAndHeight; row++) {
@@ -44,7 +46,7 @@ public class Main {
             }
         }
 
-        removeAllTrivialImpossibleSolutionsAndFillInAllCurrentTrivialSolutions();
+        solve();
         printBoard();
 
 
@@ -63,9 +65,37 @@ public class Main {
         }
     }
 
-    private static void removeAllTrivialImpossibleSolutionsAndFillInAllCurrentTrivialSolutions() {
+    private static void solve() {
 
         removeTrivalImpossibleSolutions();
+        fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells();
+
+        HashMap<Integer, ArrayList<CellIndex>> solutionsWhichCanOnlyBeFilledInOneCell = findSolutionsWhichCanOnlyBeFilledInOneCell();
+
+        while (!solutionsWhichCanOnlyBeFilledInOneCell.isEmpty()) {
+
+            for (int solution : solutionsWhichCanOnlyBeFilledInOneCell.keySet()) {
+
+                ArrayList<CellIndex> cellIndicesForThisSolutiion = solutionsWhichCanOnlyBeFilledInOneCell.get(solution);
+                for (CellIndex cellIndex : cellIndicesForThisSolutiion) {
+                    board[cellIndex.getRow()][cellIndex.getCol()] = solution;
+                    possibleSolutions.get(cellIndex.getRow()).get(cellIndex.getCol()).clear();
+                    removeThisCellsSolutionFromAllSolutionSetsOfItsRelations(cellIndex.getRow(), cellIndex.getCol());
+                }
+            }
+
+            fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells();
+
+            solutionsWhichCanOnlyBeFilledInOneCell = findSolutionsWhichCanOnlyBeFilledInOneCell();
+        }
+    }
+
+    private static void removeAllTrivialImpossibleSolutionsAndFillInAllCurrentTrivialSolutions() {
+        removeTrivalImpossibleSolutions();
+        fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells();
+    }
+
+    private static void fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells() {
 
         ArrayList<CellIndex> cellIndicesWithOnlyOnePossibleSolution = findAllCellsWhichHaveOnlyOnePossibleSolution();
         while (!cellIndicesWithOnlyOnePossibleSolution.isEmpty()) {
@@ -87,6 +117,7 @@ public class Main {
             // may leave some cells with only one solution, so that we can fill them in in the next loop
             cellIndicesWithOnlyOnePossibleSolution = findAllCellsWhichHaveOnlyOnePossibleSolution();
         }
+
     }
 
     private static void removeTrivalImpossibleSolutions () {
@@ -134,6 +165,90 @@ public class Main {
                     cellIndicesWithOnlyOnePossibleSolutiom.add(new CellIndex(row, col));
 
         return cellIndicesWithOnlyOnePossibleSolutiom;
+    }
+
+    public static HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCell() {
+
+        HashMap<Integer, ArrayList<CellIndex>> totalSolutionsWhichCanOnlyBeFilledInOneCell = new HashMap<>();
+
+        SubRange currBlockRange = new SubRange();
+
+        for (int startRow = 0; (startRow + 3) < 9; startRow += 3) {
+
+            currBlockRange.setStartRow(startRow);
+            currBlockRange.setEndRow(startRow + 3);
+
+            for (int startCol = 0; (startCol + 3) < 9; startCol += 3) {
+
+                currBlockRange.setStartCol(startCol);
+                currBlockRange.setEndCol(startCol + 3);
+
+                HashMap<Integer, ArrayList<CellIndex>> solutionsWhichCanOnlyBeFilledInOneCellFoundInThisBlock
+                        = findSolutionsWhichCanOnlyBeFilledInOneCellInThisBlock(currBlockRange);
+
+                for (int solution : solutionsWhichCanOnlyBeFilledInOneCellFoundInThisBlock.keySet()) {
+
+                    ArrayList<CellIndex> cellIndicesForThisSolutionFoundInThisBlock = solutionsWhichCanOnlyBeFilledInOneCellFoundInThisBlock.get(solution);
+
+                    if (totalSolutionsWhichCanOnlyBeFilledInOneCell.containsKey(solution))
+                        totalSolutionsWhichCanOnlyBeFilledInOneCell.get(solution).addAll(cellIndicesForThisSolutionFoundInThisBlock);
+                    else
+                        totalSolutionsWhichCanOnlyBeFilledInOneCell.put(solution, cellIndicesForThisSolutionFoundInThisBlock);
+                }
+            }
+        }
+
+        return totalSolutionsWhichCanOnlyBeFilledInOneCell;
+    }
+
+    private static HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCellInThisBlock (SubRange blockRange) {
+
+        HashMap<Integer, ArrayList<CellIndex>> solutionsWhichCanOnlyBeFilledInOneCell = new HashMap<>();
+
+        for (int solutionToTry = 1; solutionToTry < 10; solutionToTry++) {
+
+            CellIndex cellForWhichThisSolutiomIsPossible = new CellIndex(-1, -1);
+            boolean thisSolutionCanOnlyBeFilledInOneCell = true;
+            boolean thisSolutionHasAlreadyBeenFilledInThisBlock = false;
+
+            for (int row = blockRange.getStartRow(); row <= blockRange.getEndRow(); row++) {
+                for (int col = blockRange.getStartCol(); col < blockRange.getEndCol(); col++) {
+
+                    if (board[row][col] != -1) {
+                        thisSolutionHasAlreadyBeenFilledInThisBlock = true;
+                        break;
+                    }
+
+                    if (possibleSolutions.get(row).get(col).contains(solutionToTry)) {
+
+                        if (cellForWhichThisSolutiomIsPossible.getRow() != -1 && cellForWhichThisSolutiomIsPossible.getCol() != -1) {
+                            thisSolutionCanOnlyBeFilledInOneCell = false;
+                            break;
+                        }
+
+                        cellForWhichThisSolutiomIsPossible.setRow(row);
+                        cellForWhichThisSolutiomIsPossible.setCol(col);
+                    }
+                }
+
+                if (thisSolutionHasAlreadyBeenFilledInThisBlock || !thisSolutionCanOnlyBeFilledInOneCell)
+                    break;
+            }
+
+            if (!thisSolutionHasAlreadyBeenFilledInThisBlock && thisSolutionCanOnlyBeFilledInOneCell) {
+                board[cellForWhichThisSolutiomIsPossible.getRow()][cellForWhichThisSolutiomIsPossible.getCol()] = solutionToTry;
+
+                ArrayList<CellIndex> currCellIndicesForThisSoliution;
+                if (solutionsWhichCanOnlyBeFilledInOneCell.containsKey(solutionToTry))
+                    currCellIndicesForThisSoliution = solutionsWhichCanOnlyBeFilledInOneCell.get(solutionToTry);
+                else currCellIndicesForThisSoliution = new ArrayList<>();
+
+                currCellIndicesForThisSoliution.add(cellForWhichThisSolutiomIsPossible);
+                solutionsWhichCanOnlyBeFilledInOneCell.put(solutionToTry, currCellIndicesForThisSoliution);
+            }
+        }
+
+        return solutionsWhichCanOnlyBeFilledInOneCell;
     }
 
     private static void printBoard() {
