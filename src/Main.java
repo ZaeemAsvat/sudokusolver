@@ -16,8 +16,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
 	// write your code here
 
-        fillPossibleSolutionsBoard();
-
         File file = new File("/home/zaeemasvat_/IdeaProjects/sudokosolver/src/medium.txt");
 
         BufferedReader in = new BufferedReader(new FileReader(file));
@@ -46,7 +44,14 @@ public class Main {
             }
         }
 
+        fillPossibleSolutionsBoard();
+
         solve();
+
+
+        for (int i = 3; i < 6; i++)
+            for (int j = 3; j < 6; j++)
+                System.out.println(i + " " + j + ": " + possibleSolutions.get(i).get(j).clone());
         printBoard();
 
 
@@ -56,8 +61,8 @@ public class Main {
         for (int row = 0; row < boardWithAndHeight; row++) {
             possibleSolutions.add(new ArrayList<>(boardWithAndHeight));
             for (int col = 0; col < boardWithAndHeight; col++) {
-                if (board[row][col] != -1) {
-                    possibleSolutions.get(row).add(new HashSet<>(boardWithAndHeight));
+                possibleSolutions.get(row).add(new HashSet<>());
+                if (board[row][col] == -1) {
                     for (int i = 0; i < boardWithAndHeight; i++)
                         possibleSolutions.get(row).get(col).add(i + 1);
                 }
@@ -173,15 +178,15 @@ public class Main {
 
         SubRange currBlockRange = new SubRange();
 
-        for (int startRow = 0; (startRow + 3) < 9; startRow += 3) {
+        for (int startRow = 0; (startRow + 3) <= 9; startRow += 3) {
 
             currBlockRange.setStartRow(startRow);
-            currBlockRange.setEndRow(startRow + 3);
+            currBlockRange.setEndRow(startRow + 3 - 1);
 
-            for (int startCol = 0; (startCol + 3) < 9; startCol += 3) {
+            for (int startCol = 0; (startCol + 3) <= 9; startCol += 3) {
 
                 currBlockRange.setStartCol(startCol);
-                currBlockRange.setEndCol(startCol + 3);
+                currBlockRange.setEndCol(startCol + 3 - 1);
 
                 HashMap<Integer, ArrayList<CellIndex>> solutionsWhichCanOnlyBeFilledInOneCellFoundInThisBlock
                         = findSolutionsWhichCanOnlyBeFilledInOneCellInThisBlock(currBlockRange);
@@ -212,14 +217,14 @@ public class Main {
             boolean thisSolutionHasAlreadyBeenFilledInThisBlock = false;
 
             for (int row = blockRange.getStartRow(); row <= blockRange.getEndRow(); row++) {
-                for (int col = blockRange.getStartCol(); col < blockRange.getEndCol(); col++) {
+                for (int col = blockRange.getStartCol(); col <= blockRange.getEndCol(); col++) {
 
-                    if (board[row][col] != -1) {
+                    if (board[row][col] == solutionToTry) {
                         thisSolutionHasAlreadyBeenFilledInThisBlock = true;
                         break;
                     }
 
-                    if (possibleSolutions.get(row).get(col).contains(solutionToTry)) {
+                    if (board[row][col] == -1 && possibleSolutions.get(row).get(col).contains(solutionToTry)) {
 
                         if (cellForWhichThisSolutiomIsPossible.getRow() != -1 && cellForWhichThisSolutiomIsPossible.getCol() != -1) {
                             thisSolutionCanOnlyBeFilledInOneCell = false;
