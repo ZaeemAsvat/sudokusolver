@@ -47,18 +47,78 @@ public class Main {
         fillPossibleSolutionsBoard();
 
         solve();
+        board[8][5] = 5;
+        possibleSolutions.get(8).get(5).clear();
+//        solve();
 
-/*
+        for (int i = 0; i < 9; i++)
+            for (int j = 0; j < 9; j++)
+                if (board[i][j] == -1)
+                    System.out.println(possibleSolutions.get(i).get(j).clone());
+
+
         for (int i = 0; i < 9; i++)
             for (int j = 0; j < 9; j++)
                 System.out.println((i+1) + " " + (j+1) + ": " + possibleSolutions.get(i).get(j).clone());
- */printBoard();
+ printBoard();
 
 
     }
 
-    private static void failSafeDFS() {
-        
+    private static void failSafeTechnique() {
+
+        solve();
+        while (!isBoardSolved()) {
+
+            CellIndex currCellWithLeastPossibleSolutionCandidates = findCellWithLeastPossibleSolutionCandidates();
+            HashSet<Integer> possibleSolutionCandidatesForThisCell = possibleSolutions
+                                                                        .get(currCellWithLeastPossibleSolutionCandidates.getRow())
+                                                                        .get(currCellWithLeastPossibleSolutionCandidates.getCol());
+
+            for (int solutionCandidate : possibleSolutionCandidatesForThisCell) {
+
+                board[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()] = solutionCandidate;
+
+            }
+
+        }
+
+    }
+
+    private static boolean isBoardSolved() {
+        boolean isSolved = true;
+        for (int[] row : board)
+            for (int cell : row)
+                if (cell == -1) {
+                    isSolved = false;
+                    break;
+                }
+
+        return isSolved;
+    }
+
+    private static CellIndex findCellWithLeastPossibleSolutionCandidates() {
+
+        CellIndex cellWithLeastPosibleSolutiomCandidates = new CellIndex(-1, -1);
+        int minPossibleSolutionCandidates = Integer.MAX_VALUE;
+
+        for (int row = 0; row < boardWithAndHeight; row++) {
+            for (int col = 0; col < boardWithAndHeight; col++) {
+                if (possibleSolutions.get(row).get(col).size() < minPossibleSolutionCandidates) {
+
+                    cellWithLeastPosibleSolutiomCandidates.setRow(row);
+                    cellWithLeastPosibleSolutiomCandidates.setCol(col);
+
+                    minPossibleSolutionCandidates = possibleSolutions.get(row).get(col).size();
+                }
+            }
+        }
+
+        return cellWithLeastPosibleSolutiomCandidates;
+    }
+
+    private static void advancedRemovePossibleSolutionCandidates() {
+
     }
 
     private static void fillPossibleSolutionsBoard () {
@@ -110,6 +170,9 @@ public class Main {
         while (!cellIndicesWithOnlyOnePossibleSolution.isEmpty()) {
 
             for (CellIndex cellIndex : cellIndicesWithOnlyOnePossibleSolution) {
+
+                System.out.println();
+                printBoard();
 
                 // this cell only has one possible solution, so we set the cell
                 // with the first number in its possible solutions list (since it's the only solution)
