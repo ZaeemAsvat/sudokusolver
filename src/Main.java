@@ -2,10 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class Main {
 
@@ -49,8 +46,11 @@ public class Main {
         solve();
         board[8][5] = 5;
         possibleSolutions.get(8).get(5).clear();
+
+
 //        solve();
 
+        /*
         for (int i = 0; i < 9; i++)
             for (int j = 0; j < 9; j++)
                 if (board[i][j] == -1)
@@ -60,39 +60,121 @@ public class Main {
         for (int i = 0; i < 9; i++)
             for (int j = 0; j < 9; j++)
                 System.out.println((i+1) + " " + (j+1) + ": " + possibleSolutions.get(i).get(j).clone());
+                */
+
+/*
+            for (int row = 0; row < boardWithAndHeight; row++) {
+                for (int sol = 1; sol < 10; sol++) {
+                    boolean b = false;
+                    for (int col = 0; col < 9; col++) {
+                        if (board[col][row] == sol || possibleSolutions.get(col).get(row).contains(sol)) {
+                            b = true;
+                            break;
+                        }
+                    }
+
+                    System.out.println(b);
+                }
+            }
+*/
+
+
+        SubRange currBlockRange = new SubRange();
+
+        for (int startRow = 0; (startRow + 3) <= 9; startRow += 3) {
+
+            currBlockRange.setStartRow(startRow);
+            currBlockRange.setEndRow(startRow + 3 - 1);
+
+            for (int startCol = 0; (startCol + 3) <= 9; startCol += 3) {
+
+                currBlockRange.setStartCol(startCol);
+                currBlockRange.setEndCol(startCol + 3 - 1);
+
+                for (int sol = 1; sol < 10; sol++) {
+                    boolean b = false;
+                    for (int r = currBlockRange.getStartRow(); r <= currBlockRange.getEndRow(); r++) {
+                        for (int c = currBlockRange.getStartCol(); c <= currBlockRange.getEndCol(); c++) {
+                            if (board[r][c] == sol || possibleSolutions.get(r).get(c).contains(sol)) {
+                                b = true;
+                                break;
+                            }
+                        }
+
+                        if (b)
+                            break;
+                    }
+
+                    System.out.println(b);
+                }
+
+            }
+        }
+
  printBoard();
 
 
     }
 
-    private static void failSafeTechnique() {
+    private static boolean failSafeTechnique(Stack<CellIndex> myStack) {
 
-        solve();
-        while (!isBoardSolved()) {
+        if (myStack == null)
+            myStack = new Stack<>();
 
-            CellIndex currCellWithLeastPossibleSolutionCandidates = findCellWithLeastPossibleSolutionCandidates();
-            HashSet<Integer> possibleSolutionCandidatesForThisCell = possibleSolutions
-                                                                        .get(currCellWithLeastPossibleSolutionCandidates.getRow())
-                                                                        .get(currCellWithLeastPossibleSolutionCandidates.getCol());
+        CellIndex currCellWithLeastPossibleSolutionCandidates = findCellWithLeastPossibleSolutionCandidates();
 
-            for (int solutionCandidate : possibleSolutionCandidatesForThisCell) {
+        myStack.push(currCellWithLeastPossibleSolutionCandidates);
 
-                board[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()] = solutionCandidate;
+        Stack<Integer> possibleSolutionCandidatesForThisCell = new Stack<>();
+        for (int possibleSolutionCandidate : possibleSolutions.get(currCellWithLeastPossibleSolutionCandidates.getRow()).get(currCellWithLeastPossibleSolutionCandidates.getCol()))
+            possibleSolutionCandidatesForThisCell.push(possibleSolutionCandidate);
 
+        board[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()] = possibleSolutionCandidatesForThisCell.pop();
+
+        HashMap<Integer, ArrayList<CellIndex>> solutionsFilled = new HashMap<>();
+        HashMap<Integer, ArrayList<CellIndex>> solutionCandidnatesRemoved = new HashMap<>();
+
+        boolean thisSolutionResultedInProblems = !trySolve(solutionCandidnatesRemoved;
+
+        while ((thisSolutionResultedInProblems && !possibleSolutionCandidatesForThisCell.empty())
+                || (!isBoardSolved() && !failSafeTechnique(myStack))) {
+
+            board[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()] = possibleSolutionCandidatesForThisCell.pop();
+
+            for (int solutionFilled : solutionsFilled.keySet()) {
+                ArrayList<CellIndex> cellsFilled = solutionsFilled.get(solutionFilled);
+                for (CellIndex cellFilled : cellsFilled)
+                    board[cellFilled.getRow()][cellFilled.getCol()] = -1;
             }
 
+            for (int solutionCandidateRemoved : solutionCandidnatesRemoved.keySet()) {
+                ArrayList<CellIndex> cellsThatHadThisSolutionRemoved = solutionCandidnatesRemoved.get(solutionCandidateRemoved);
+                for (CellIndex cellThatHadThisSolutiomRemoved : cellsThatHadThisSolutionRemoved)
+                    possibleSolutions.get(cellThatHadThisSolutiomRemoved.getRow()).get(cellThatHadThisSolutiomRemoved.getCol()).add(solutionCandidateRemoved);
+            }
         }
+
+        return !thisSolutionResultedInProblems && possibleSolutionCandidatesForThisCell.empty();
+    }
+
+    private static boolean trySolve(HashMap<Integer, ArrayList<CellIndex>> solutionsRemoved, HashMap<Integer, ArrayList<CellIndex>> solutionsFilled) {
 
     }
 
     private static boolean isBoardSolved() {
         boolean isSolved = true;
-        for (int[] row : board)
-            for (int cell : row)
+
+        for (int[] row : board) {
+            for (int cell : row) {
                 if (cell == -1) {
                     isSolved = false;
                     break;
                 }
+            }
+
+            if (!isSolved)
+                break;
+        }
 
         return isSolved;
     }
@@ -104,7 +186,7 @@ public class Main {
 
         for (int row = 0; row < boardWithAndHeight; row++) {
             for (int col = 0; col < boardWithAndHeight; col++) {
-                if (possibleSolutions.get(row).get(col).size() < minPossibleSolutionCandidates) {
+                if (board[row][col] == -1 && possibleSolutions.get(row).get(col).size() < minPossibleSolutionCandidates) {
 
                     cellWithLeastPosibleSolutiomCandidates.setRow(row);
                     cellWithLeastPosibleSolutiomCandidates.setCol(col);
