@@ -116,14 +116,9 @@ public class Main {
 
     }
 
-    private static boolean failSafeTechnique(Stack<CellIndex> myStack) {
-
-        if (myStack == null)
-            myStack = new Stack<>();
+    private static boolean failSafeTechnique() {
 
         CellIndex currCellWithLeastPossibleSolutionCandidates = findCellWithLeastPossibleSolutionCandidates();
-
-        myStack.push(currCellWithLeastPossibleSolutionCandidates);
 
         Stack<Integer> possibleSolutionCandidatesForThisCell = new Stack<>();
         for (int possibleSolutionCandidate : possibleSolutions.get(currCellWithLeastPossibleSolutionCandidates.getRow()).get(currCellWithLeastPossibleSolutionCandidates.getCol()))
@@ -134,10 +129,12 @@ public class Main {
         HashMap<Integer, ArrayList<CellIndex>> solutionsFilled = new HashMap<>();
         HashMap<Integer, ArrayList<CellIndex>> solutionCandidnatesRemoved = new HashMap<>();
 
-        boolean thisSolutionResultedInProblems = !trySolve(solutionCandidnatesRemoved;
+        boolean thisSolutionResultedInProblems = !trySolve(solutionCandidnatesRemoved, solutionsFilled);
 
-        while ((thisSolutionResultedInProblems && !possibleSolutionCandidatesForThisCell.empty())
-                || (!isBoardSolved() && !failSafeTechnique(myStack))) {
+        while (thisSolutionResultedInProblems || (!isBoardSolved() && !failSafeTechnique())) {
+
+            if (possibleSolutionCandidatesForThisCell.empty())
+                break;
 
             board[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()] = possibleSolutionCandidatesForThisCell.pop();
 
@@ -152,9 +149,11 @@ public class Main {
                 for (CellIndex cellThatHadThisSolutiomRemoved : cellsThatHadThisSolutionRemoved)
                     possibleSolutions.get(cellThatHadThisSolutiomRemoved.getRow()).get(cellThatHadThisSolutiomRemoved.getCol()).add(solutionCandidateRemoved);
             }
+
+            thisSolutionResultedInProblems = !trySolve(solutionCandidnatesRemoved, solutionsFilled);
         }
 
-        return !thisSolutionResultedInProblems && possibleSolutionCandidatesForThisCell.empty();
+        return isBoardSolved() || !possibleSolutionCandidatesForThisCell.empty();
     }
 
     private static boolean trySolve(HashMap<Integer, ArrayList<CellIndex>> solutionsRemoved, HashMap<Integer, ArrayList<CellIndex>> solutionsFilled) {
