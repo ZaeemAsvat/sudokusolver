@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/src/Main.java" line="53" mnemonic="0" />
+    <bookmark url="file://$PROJECT_DIR$/src/Main.java" line="54" mnemonic="0" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="baff07a9-ccf1-4e28-93f3-4c960f4e23c1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SubRange.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SubRange.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,6 +14,20 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
   </component>
   <component name="FUSProjectUsageTrigger">
     <session id="-607510151">
@@ -26,28 +40,29 @@
           <entry key="project.open.time.41" value="1" />
           <entry key="project.open.time.44" value="2" />
           <entry key="project.open.time.47" value="2" />
+          <entry key="project.open.time.48" value="1" />
           <entry key="project.open.time.50" value="2" />
-          <entry key="project.opened" value="11" />
+          <entry key="project.opened" value="12" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="13874" />
+          <entry key="java" value="17506" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="13874" />
+          <entry key="JAVA" value="17506" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="java" value="3" />
+          <entry key="java" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JAVA" value="3" />
+          <entry key="JAVA" value="4" />
         </counts>
       </usages-collector>
     </session>
@@ -57,21 +72,29 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="441">
-              <caret line="454" column="24" lean-forward="true" selection-start-line="454" selection-start-column="24" selection-end-line="454" selection-end-column="24" />
+            <state relative-caret-position="138">
+              <caret line="389" column="64" selection-start-line="389" selection-start-column="64" selection-end-line="389" selection-end-column="64" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#main#0;class#Main#0" expanded="true" />
                 <element signature="method#failSafeTechnique#0;class#Main#0" expanded="true" />
                 <element signature="method#trySolve#0;class#Main#0" expanded="true" />
+                <element signature="method#fillInSolutionCandidatesWhichCanOnlyBeFilledInOneCell#0;class#Main#0" expanded="true" />
+                <element signature="method#findAndFillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells#0;class#Main#0" expanded="true" />
+                <element signature="method#fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells#0;class#Main#0" expanded="true" />
+                <element signature="method#removeSolutiomCandidates#0;class#Main#0" expanded="true" />
+                <element signature="method#removeSolutionCandidates#0;class#Main#0" expanded="true" />
+                <element signature="method#addAll#0;class#Main#0" expanded="true" />
+                <element signature="method#findTrivialImpossibleSolutionCandidates#0;class#Main#0" expanded="true" />
                 <element signature="method#isTheBoardErronous#0;class#Main#0" expanded="true" />
                 <element signature="method#isThisPortionOfTheBoardErronous#0;class#Main#0" expanded="true" />
                 <element signature="method#isBoardSolved#0;class#Main#0" expanded="true" />
                 <element signature="method#findCellWithLeastPossibleSolutionCandidates#0;class#Main#0" expanded="true" />
                 <element signature="method#advancedRemovePossibleSolutionCandidates#0;class#Main#0" expanded="true" />
                 <element signature="method#solve#0;class#Main#0" expanded="true" />
-                <element signature="method#fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells#0;class#Main#0" expanded="true" />
+                <element signature="method#fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells#1;class#Main#0" expanded="true" />
                 <element signature="method#removeTrivalImpossibleSolutions#0;class#Main#0" expanded="true" />
+                <element signature="method#removeThisCellsSolutionFromAllSolutionSetsOfItsRelations#0;class#Main#0" expanded="true" />
                 <element signature="method#findAllCellsWhichHaveOnlyOnePossibleSolution#0;class#Main#0" expanded="true" />
                 <element signature="method#findSolutionsWhichCanOnlyBeFilledInOneCellUsingRows#0;class#Main#0" expanded="true" />
                 <element signature="method#findSolutionsWhichCanOnlyBeFilledInOneCellInThisRow#0;class#Main#0" expanded="true" />
@@ -102,8 +125,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/SubRange.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="5" selection-start-line="5" selection-end-line="5" />
+            <state relative-caret-position="68">
+              <caret line="4" column="17" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -189,7 +212,7 @@
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///home/zaeemasvat_/IdeaProjects/sudokosolver/src/SubRange.java" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1546721380101" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1546796452080" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
@@ -246,14 +269,16 @@
       <workItem from="1546556669802" duration="3534000" />
       <workItem from="1546618280314" duration="9055000" />
       <workItem from="1546702759203" duration="12669000" />
+      <workItem from="1546773503415" duration="18938000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="83046000" />
+    <option name="totallyTimeSpent" value="101984000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1366" height="741" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.25378788" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -264,7 +289,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.14029364" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.39151713" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -279,7 +304,7 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="right" id="Capture Analysis" order="4" />
-      <window_info anchor="right" id="Database" order="5" />
+      <window_info anchor="right" id="Database" order="5" weight="0.32954547" />
       <window_info anchor="right" id="Theme Preview" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Maven Projects" order="8" />
@@ -293,23 +318,55 @@
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/Cell.java" />
+    <entry file="file://$PROJECT_DIR$/src/CellIndex.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="12" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/usr/java/jdk-10.0.2/lib/src.zip!/java.base/java/util/ArrayList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="525" column="7" lean-forward="true" selection-start-line="525" selection-start-column="7" selection-end-line="525" selection-end-column="7" />
+          <folding>
+            <element signature="e#15865#16235#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/SubRange.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="17" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="441">
-          <caret line="454" column="24" lean-forward="true" selection-start-line="454" selection-start-column="24" selection-end-line="454" selection-end-column="24" />
+        <state relative-caret-position="138">
+          <caret line="389" column="64" selection-start-line="389" selection-start-column="64" selection-end-line="389" selection-end-column="64" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#main#0;class#Main#0" expanded="true" />
             <element signature="method#failSafeTechnique#0;class#Main#0" expanded="true" />
             <element signature="method#trySolve#0;class#Main#0" expanded="true" />
+            <element signature="method#fillInSolutionCandidatesWhichCanOnlyBeFilledInOneCell#0;class#Main#0" expanded="true" />
+            <element signature="method#findAndFillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells#0;class#Main#0" expanded="true" />
+            <element signature="method#fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells#0;class#Main#0" expanded="true" />
+            <element signature="method#removeSolutiomCandidates#0;class#Main#0" expanded="true" />
+            <element signature="method#removeSolutionCandidates#0;class#Main#0" expanded="true" />
+            <element signature="method#addAll#0;class#Main#0" expanded="true" />
+            <element signature="method#findTrivialImpossibleSolutionCandidates#0;class#Main#0" expanded="true" />
             <element signature="method#isTheBoardErronous#0;class#Main#0" expanded="true" />
             <element signature="method#isThisPortionOfTheBoardErronous#0;class#Main#0" expanded="true" />
             <element signature="method#isBoardSolved#0;class#Main#0" expanded="true" />
             <element signature="method#findCellWithLeastPossibleSolutionCandidates#0;class#Main#0" expanded="true" />
             <element signature="method#advancedRemovePossibleSolutionCandidates#0;class#Main#0" expanded="true" />
             <element signature="method#solve#0;class#Main#0" expanded="true" />
-            <element signature="method#fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells#0;class#Main#0" expanded="true" />
+            <element signature="method#fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells#1;class#Main#0" expanded="true" />
             <element signature="method#removeTrivalImpossibleSolutions#0;class#Main#0" expanded="true" />
+            <element signature="method#removeThisCellsSolutionFromAllSolutionSetsOfItsRelations#0;class#Main#0" expanded="true" />
             <element signature="method#findAllCellsWhichHaveOnlyOnePossibleSolution#0;class#Main#0" expanded="true" />
             <element signature="method#findSolutionsWhichCanOnlyBeFilledInOneCellUsingRows#0;class#Main#0" expanded="true" />
             <element signature="method#findSolutionsWhichCanOnlyBeFilledInOneCellInThisRow#0;class#Main#0" expanded="true" />
@@ -324,20 +381,6 @@
             <element signature="method#roundDown#0;class#Main#0" expanded="true" />
             <element signature="method#roundUp#0;class#Main#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/CellIndex.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="12" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/SubRange.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" selection-start-line="5" selection-end-line="5" />
         </state>
       </provider>
     </entry>

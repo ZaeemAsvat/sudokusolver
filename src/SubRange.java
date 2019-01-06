@@ -3,7 +3,6 @@ public class SubRange {
     private int startRow = -1, startCol = -1, endRow = -1, endCol = -1;
 
     SubRange() {}
-
     SubRange (int startR, int endR, int startC, int endC) {
         startRow = startR;
         endRow = endR;
