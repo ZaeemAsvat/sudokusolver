@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
 	// write your code here
 
-        File file = new File("/home/zaeemasvat_/IdeaProjects/sudokosolver/src/hard.txt");
+        File file = new File("/home/zaeemasvat_/IdeaProjects/sudokosolver/src/extreme.txt");
 
         BufferedReader in = new BufferedReader(new FileReader(file));
         for (int row = 0; row < boardWithAndHeight; row++) {
@@ -114,11 +114,13 @@ public class Main {
         } */
 
     solve();
-    CellIndex c = findCellWithLeastPossibleSolutionCandidates(new boolean[9][9]);
-    System.out.println(c.getRow() + " " + c.getCol());
     printBoard();
-    System.out.println();
+    CellIndex c = findCellWithLeastPossibleSolutionCandidates(new boolean[9][9]);
+
+    System.out.println(c.getRow() + " " + c.getCol());
+    System.out.println(possibleSolutions.get(c.getRow()).get(c.getCol()).clone());
     failSafeTechnique(new boolean[boardWithAndHeight][boardWithAndHeight]);
+    System.out.println();
     printBoard();
 
 
@@ -137,7 +139,7 @@ public class Main {
             possibleSolutionCandidatesForThisCell.push(possibleSolutionCandidate);
 
         if (possibleSolutionCandidatesForThisCell.empty()) {
-            visited[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()] = true;
+            visited[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()] = false;
             return false;
         }
 
@@ -150,15 +152,14 @@ public class Main {
 
         HashMap<Integer, ArrayList<CellIndex>> solutionCandidnatesRemoved = new HashMap<>();
         solutionCandidnatesRemoved.put(board[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()], cellsRelatedToThisCell);
+        solutionCandidnatesRemoved.get(board[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()]).add(currCellWithLeastPossibleSolutionCandidates);
 
-        boolean thisSolutionResultedInProblems = !trySolve(solutionCandidnatesRemoved, solutionsFilled);
+        boolean thisSolutionResultedInProblems = trySolve(solutionCandidnatesRemoved, solutionsFilled);
 
         while (thisSolutionResultedInProblems || (!isBoardSolved() && !failSafeTechnique(visited))) {
 
-            if (possibleSolutionCandidatesForThisCell.empty()) {
-                visited[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()] = false;
+            if (possibleSolutionCandidatesForThisCell.empty())
                 break;
-            }
 
             for (int solutionFilled : solutionsFilled.keySet()) {
                 ArrayList<CellIndex> cellsFilled = solutionsFilled.get(solutionFilled);
@@ -183,11 +184,19 @@ public class Main {
             solutionsFilled.get(board[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()]).add(currCellWithLeastPossibleSolutionCandidates);
 
             solutionCandidnatesRemoved.put(board[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()], cellsRelatedToThisCell);
+            solutionCandidnatesRemoved.get(board[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()]).add(currCellWithLeastPossibleSolutionCandidates);
 
-            thisSolutionResultedInProblems = !trySolve(solutionCandidnatesRemoved, solutionsFilled);
+            thisSolutionResultedInProblems = trySolve(solutionCandidnatesRemoved, solutionsFilled);
         }
 
-        return isBoardSolved() || !possibleSolutionCandidatesForThisCell.empty();
+        System.out.println(currCellWithLeastPossibleSolutionCandidates.getRow() + " " + currCellWithLeastPossibleSolutionCandidates.getCol());
+
+        if (!isBoardSolved() && possibleSolutionCandidatesForThisCell.empty()) {
+            visited[currCellWithLeastPossibleSolutionCandidates.getRow()][currCellWithLeastPossibleSolutionCandidates.getCol()] = false;
+            return false;
+        }
+
+        return isBoardSolved();
     }
 
     private static boolean trySolve(HashMap<Integer, ArrayList<CellIndex>> solutionCandidatesRemoved, HashMap<Integer, ArrayList<CellIndex>> solutionsFilled) {
@@ -198,9 +207,8 @@ public class Main {
         removeSolutiomCandidates(trivialImpossibleSolutionCandidates);
         addAll(solutionCandidatesRemoved, trivialImpossibleSolutionCandidates);
 
-        thisSolutionResultedInProblems = findAndFillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells(solutionCandidatesRemoved, solutionsFilled);
-
-      //  thisSolutionResultedInProblems = isTheBoardErronous();
+        thisSolutionResultedInProblems = findAndFillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells(solutionCandidatesRemoved, solutionsFilled)
+        ||isTheBoardErronous();
 
         if (!thisSolutionResultedInProblems) {
 
@@ -208,14 +216,14 @@ public class Main {
 
             while (!solutionsWhichCanOnlyBeFilledInOneCell.isEmpty()) {
 
-                thisSolutionResultedInProblems = fillInSolutionCandidatesWhichCanOnlyBeFilledInOneCell(solutionsWhichCanOnlyBeFilledInOneCell, solutionCandidatesRemoved, solutionCandidatesRemoved);
-          //      thisSolutionResultedInProblems = isTheBoardErronous();
+                thisSolutionResultedInProblems = fillInSolutionCandidatesWhichCanOnlyBeFilledInOneCell(solutionsWhichCanOnlyBeFilledInOneCell, solutionCandidatesRemoved, solutionsFilled)
+                || isTheBoardErronous();
 
                 if (thisSolutionResultedInProblems)
                     break;
 
-                thisSolutionResultedInProblems = findAndFillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells (solutionCandidatesRemoved, solutionsFilled);
-        //        thisSolutionResultedInProblems = isTheBoardErronous();
+                thisSolutionResultedInProblems = findAndFillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells (solutionCandidatesRemoved, solutionsFilled)
+            || isTheBoardErronous();
 
                 if (thisSolutionResultedInProblems)
                     break;
@@ -252,6 +260,7 @@ public class Main {
                 if (!solutionCandidatesRemoved.containsKey(board[cellIndex.getRow()][cellIndex.getCol()]))
                     solutionCandidatesRemoved.put(board[cellIndex.getRow()][cellIndex.getCol()], new ArrayList<>());
                 solutionCandidatesRemoved.get(board[cellIndex.getRow()][cellIndex.getCol()]).add(cellIndex);
+                solutionCandidatesRemoved.get(board[cellIndex.getRow()][cellIndex.getCol()]).addAll(cellsRelatedToThisCell);
             }
 
             if (didAnyProblemsOccur)
@@ -316,6 +325,7 @@ public class Main {
 
             if (!solutionCandidatesRemoved.containsKey(board[cellIndex.getRow()][cellIndex.getCol()]))
                 solutionCandidatesRemoved.put(board[cellIndex.getRow()][cellIndex.getCol()], new ArrayList<>());
+            solutionCandidatesRemoved.get(board[cellIndex.getRow()][cellIndex.getCol()]).add(cellIndex);
             solutionCandidatesRemoved.get(board[cellIndex.getRow()][cellIndex.getCol()]).addAll(cellsRelatedToThisCell);
 
         }
