@@ -8,7 +8,7 @@ public class Main {
 
     private static final int boardWithAndHeight = 9;
     private static final int[][] board = new int[boardWithAndHeight][boardWithAndHeight];
-    private static ArrayList<ArrayList<HashSet<Integer>>> possibleSolutions = new ArrayList<>(boardWithAndHeight);
+    private static ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates = new ArrayList<>(boardWithAndHeight);
 
     public static void main(String[] args) throws IOException {
 	// write your code here
@@ -43,25 +43,31 @@ public class Main {
 
         fillPossibleSolutionsBoard();
 
-        if (isTheBoardErronous())
+        if (GeneralHelpers.isTheBoardErronous(board, possibleSolutionCandidates))
             System.out.println("Input board is erroneous");
         else solve();
     }
 
     private static void solve() {
 
-        trySolveWithoutGuessing();
+        ExactTechniques exactTechniques = new ExactTechniques(board, possibleSolutionCandidates);
+        exactTechniques.trySolve();
+        GeneralHelpers.fillBoard(board, exactTechniques.getBoard());
+        GeneralHelpers.fillPossibleSolutionCandidates(possibleSolutionCandidates, exactTechniques.getPossibleSolutionCandidates());
         System.out.println("Board after trying to solve without guessing:");
         printBoard();
 
-        smartDFS(new boolean[boardWithAndHeight][boardWithAndHeight]);
-        System.out.println("Board after using smart DFS:");
-        printBoard();
+        if (!GeneralHelpers.isBoardSolved(board)) {
+
+            TrialAndErrorTechniques trialAndErrorTechniques = new TrialAndErrorTechniques(board, possibleSolutionCandidates);
+            trialAndErrorTechniques.smartDFS(new boolean[boardWithAndHeight][boardWithAndHeight]);
+            GeneralHelpers.fillBoard(board, trialAndErrorTechniques.getBoard());
+            GeneralHelpers.fillPossibleSolutionCandidates(possibleSolutionCandidates, trialAndErrorTechniques.getPossibleSolutionCandidates());
+            System.out.println("Board after using smart DFS:");
+            printBoard();
+
+        }
     }
-
-
-
-
 
     private static void advancedRemovePossibleSolutionCandidates() {
 
@@ -69,24 +75,14 @@ public class Main {
 
     private static void fillPossibleSolutionsBoard () {
         for (int row = 0; row < boardWithAndHeight; row++) {
-            possibleSolutions.add(new ArrayList<>(boardWithAndHeight));
+            possibleSolutionCandidates.add(new ArrayList<>(boardWithAndHeight));
             for (int col = 0; col < boardWithAndHeight; col++) {
-                possibleSolutions.get(row).add(new HashSet<>());
+                possibleSolutionCandidates.get(row).add(new HashSet<>());
                 if (board[row][col] == -1) {
                     for (int i = 0; i < boardWithAndHeight; i++)
-                        possibleSolutions.get(row).get(col).add(i + 1);
+                        possibleSolutionCandidates.get(row).get(col).add(i + 1);
                 }
             }
-        }
-    }
-
-
-
-    private static void addSolutions (HashMap<Integer, ArrayList<CellIndex>> major, HashMap<Integer, ArrayList<CellIndex>> minor) {
-        for (int solution : minor.keySet()) {
-            if (!major.containsKey(solution))
-                major.put(solution, new ArrayList<>());
-            major.get(solution).addAll(minor.get(solution));
         }
     }
 

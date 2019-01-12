@@ -20,6 +20,14 @@ public class ExactTechniques {
                 this.board[row][col] = board[row][col];
     }
 
+    public int[][] getBoard() {
+        return board;
+    }
+
+    public ArrayList<ArrayList<HashSet<Integer>>> getPossibleSolutionCandidates() {
+        return possibleSolutionCandidates;
+    }
+
     public void setPossibleSolutionCandidates (ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates) {
 
         for (int row = 0; row < possibleSolutionCandidates.size(); row++)
@@ -28,7 +36,7 @@ public class ExactTechniques {
 
     }
 
-    private void trySolveWithoutGuessing() {
+    public void trySolve() {
 
         removeTrivalImpossibleSolutions();
         fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells();

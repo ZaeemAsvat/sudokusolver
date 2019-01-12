@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -177,6 +178,19 @@ public class GeneralHelpers {
                 mainMap.put(key, new ArrayList<>());
             mainMap.get(key).addAll(subMap.get(key));
         }
+    }
+
+    public static void fillBoard (int[][] boardToBeFilled, int[][] boardToFill) {
+
+        for (int row = 0; row < boardWithAndHeight; row++)
+            for (int col = 0; col < boardWithAndHeight; col++)
+                boardToBeFilled[row][col] = boardToFill[row][col];
+    }
+
+    public static void fillPossibleSolutionCandidates (ArrayList<ArrayList<HashSet<Integer>>> toBeFilled, ArrayList<ArrayList<HashSet<Integer>>> toFill) {
+        for (int row = 0; row < boardWithAndHeight; row++)
+            for (int col = 0; col < boardWithAndHeight; col++)
+                toBeFilled.get(row).set(col, toFill.get(row).get(col));
     }
 
     public static SubRange getSubRange (int row, int col) {

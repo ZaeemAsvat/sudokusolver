@@ -18,6 +18,10 @@ public class TrialAndErrorTechniques {
         return board;
     }
 
+    public ArrayList<ArrayList<HashSet<Integer>>> getPossibleSolutionCandidates() {
+        return possibleSolutionCandidates;
+    }
+
     public boolean smartDFS(boolean[][] cellsFilled) {
 
         boolean isTheBoardErroneous = false;
@@ -123,7 +127,9 @@ public class TrialAndErrorTechniques {
 
         boolean theGuessDidntImmediatelyResultInAnErronousBoard;
 
-        HashMap<Integer, ArrayList<CellIndex>> trivialImpossibleSolutionCandidates = findTrivialImpossibleSolutionCandidates();
+        ExactTechniques exactTechniques = new ExactTechniques(board, possibleSolutionCandidates);
+
+        HashMap<Integer, ArrayList<CellIndex>> trivialImpossibleSolutionCandidates = exactTechniques.findTrivialImpossibleSolutionCandidates();
         GeneralHelpers.removeSolutiomCandidates(possibleSolutionCandidates, trivialImpossibleSolutionCandidates);
         GeneralHelpers.addAll(solutionCandidatesRemoved, trivialImpossibleSolutionCandidates);
 
@@ -132,7 +138,10 @@ public class TrialAndErrorTechniques {
 
         if (theGuessDidntImmediatelyResultInAnErronousBoard) {
 
-            HashMap<Integer, ArrayList<CellIndex>> solutionsWhichCanOnlyBeFilledInOneCell = findSolutionsWhichCanOnlyBeFilledInOneCell();
+            exactTechniques.setBoard(board);
+            exactTechniques.setPossibleSolutionCandidates(possibleSolutionCandidates);
+
+            HashMap<Integer, ArrayList<CellIndex>> solutionsWhichCanOnlyBeFilledInOneCell = exactTechniques.findSolutionsWhichCanOnlyBeFilledInOneCell();
 
             while (!solutionsWhichCanOnlyBeFilledInOneCell.isEmpty()) {
 
@@ -149,7 +158,10 @@ public class TrialAndErrorTechniques {
                 if (!theGuessDidntImmediatelyResultInAnErronousBoard)
                     break;
 
-                solutionsWhichCanOnlyBeFilledInOneCell = findSolutionsWhichCanOnlyBeFilledInOneCell();
+                exactTechniques.setBoard(board);
+                exactTechniques.setPossibleSolutionCandidates(possibleSolutionCandidates);
+
+                solutionsWhichCanOnlyBeFilledInOneCell = exactTechniques.findSolutionsWhichCanOnlyBeFilledInOneCell();
             }
         }
 
@@ -175,8 +187,8 @@ public class TrialAndErrorTechniques {
 
                 possibleSolutionCandidates.get(cellIndex.getRow()).get(cellIndex.getCol()).clear();
 
-                ArrayList<CellIndex> cellsRelatedToThisCell = findAllCellsRelatedToThisCell(cellIndex.getRow(), cellIndex.getCol());
-                removeSolutionCandidates(solution, cellsRelatedToThisCell);
+                ArrayList<CellIndex> cellsRelatedToThisCell = GeneralHelpers.findAllCellsRelatedToThisCell(cellIndex.getRow(), cellIndex.getCol());
+                GeneralHelpers.removeSolutionCandidates(solution, cellsRelatedToThisCell, possibleSolutionCandidates);
 
                 if (!solutionCandidatesRemoved.containsKey(solution))
                     solutionCandidatesRemoved.put(solution, new ArrayList<>());
@@ -199,7 +211,9 @@ public class TrialAndErrorTechniques {
 
         boolean isTheBoardErroneous = false;
 
-        ArrayList<CellIndex> cellIndicesWithOnlyOnePossibleSolution = findAllCellsWhichHaveOnlyOnePossibleSolution();
+        ExactTechniques exactTechniques = new ExactTechniques(board, possibleSolutionCandidates);
+
+        ArrayList<CellIndex> cellIndicesWithOnlyOnePossibleSolution = exactTechniques.findAllCellsWhichHaveOnlyOnePossibleSolution();
 
         while (!cellIndicesWithOnlyOnePossibleSolution.isEmpty()) {
 
@@ -207,16 +221,19 @@ public class TrialAndErrorTechniques {
             if (isTheBoardErroneous)
                 break;
 
+            exactTechniques.setBoard(board);
+            exactTechniques.setPossibleSolutionCandidates(possibleSolutionCandidates);
+
             // some possible solutions could have been removed from various unfilled cells, which
             // may leave some cells with only one solution, so that we can fill them in in the next loop
-            cellIndicesWithOnlyOnePossibleSolution = findAllCellsWhichHaveOnlyOnePossibleSolution();
+            cellIndicesWithOnlyOnePossibleSolution = exactTechniques.findAllCellsWhichHaveOnlyOnePossibleSolution();
         }
 
         return !isTheBoardErroneous;
 
     }
 
-    public static boolean fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells (ArrayList<CellIndex> cellIndicesWithOnlyOnePossibleSolution, HashMap<Integer, ArrayList<CellIndex>> solutionCandidatesRemoved, HashMap<Integer, ArrayList<CellIndex>> solutionsFilled) {
+    public boolean fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells (ArrayList<CellIndex> cellIndicesWithOnlyOnePossibleSolution, HashMap<Integer, ArrayList<CellIndex>> solutionCandidatesRemoved, HashMap<Integer, ArrayList<CellIndex>> solutionsFilled) {
 
         boolean isTheBoardErroneous = false;
 
@@ -242,10 +259,10 @@ public class TrialAndErrorTechniques {
             possibleSolutionCandidates.get(cellIndex.getRow()).get(cellIndex.getCol()).clear();
 
             // find cells related to this cell
-            ArrayList<CellIndex> cellsRelatedToThisCell = findAllCellsRelatedToThisCell(cellIndex.getRow(), cellIndex.getCol());
+            ArrayList<CellIndex> cellsRelatedToThisCell = GeneralHelpers.findAllCellsRelatedToThisCell(cellIndex.getRow(), cellIndex.getCol());
 
             // remove this cells solution as a solution candidate to all related cells
-            removeSolutionCandidates(thisCellsSolution, cellsRelatedToThisCell);
+            GeneralHelpers.removeSolutionCandidates(thisCellsSolution, cellsRelatedToThisCell, possibleSolutionCandidates);
 
             if (!solutionCandidatesRemoved.containsKey(thisCellsSolution))
                 solutionCandidatesRemoved.put(thisCellsSolution, new ArrayList<>());
