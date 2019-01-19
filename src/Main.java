@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
 	// write your code here
 
-        File file = new File("/home/zaeemasvat_/IdeaProjects/sudokosolver/src/extreme.txt");
+        File file = new File("/home/zaeemasvat_/IdeaProjects/sudokosolver/src/test.txt");
 
         BufferedReader in = new BufferedReader(new FileReader(file));
         for (int row = 0; row < boardWithAndHeight; row++) {
@@ -50,27 +50,16 @@ public class Main {
 
     private static void solve() {
 
-        ExactTechniques exactTechniques = new ExactTechniques(board, possibleSolutionCandidates);
-        exactTechniques.trySolve();
-        GeneralHelpers.fillBoard(board, exactTechniques.getBoard());
-        GeneralHelpers.fillPossibleSolutionCandidates(possibleSolutionCandidates, exactTechniques.getPossibleSolutionCandidates());
+        ExactTechniques.trySolve(board, possibleSolutionCandidates);
         System.out.println("Board after trying to solve without guessing:");
         printBoard();
 
         if (!GeneralHelpers.isBoardSolved(board)) {
-
-            TrialAndErrorTechniques trialAndErrorTechniques = new TrialAndErrorTechniques(board, possibleSolutionCandidates);
-            trialAndErrorTechniques.smartDFS(new boolean[boardWithAndHeight][boardWithAndHeight]);
-            GeneralHelpers.fillBoard(board, trialAndErrorTechniques.getBoard());
-            GeneralHelpers.fillPossibleSolutionCandidates(possibleSolutionCandidates, trialAndErrorTechniques.getPossibleSolutionCandidates());
+            TrialAndErrorTechniques.smartDFS(board, possibleSolutionCandidates, new boolean[boardWithAndHeight][boardWithAndHeight]);
             System.out.println("Board after using smart DFS:");
             printBoard();
 
         }
-    }
-
-    private static void advancedRemovePossibleSolutionCandidates() {
-
     }
 
     private static void fillPossibleSolutionsBoard () {
@@ -85,7 +74,6 @@ public class Main {
             }
         }
     }
-
 
     private static void printBoard() {
         for (int[] row : board) {

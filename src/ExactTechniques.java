@@ -5,43 +5,13 @@ import java.util.HashSet;
 public class ExactTechniques {
 
     private static final int boardWithAndHeight = 9;
-    private final int[][] board;
-    private final ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates;
 
-    public ExactTechniques (int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates) {
-        this.board = board;
-        this.possibleSolutionCandidates = possibleSolutionCandidates;
-    }
+    public static void trySolve(int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates) {
 
-    public void setBoard (int[][] board) {
+        removeTrivalImpossibleSolutions(board, possibleSolutionCandidates);
+        fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells(board, possibleSolutionCandidates);
 
-        for (int row = 0; row < boardWithAndHeight; row++)
-            for (int col = 0; col < boardWithAndHeight; col++)
-                this.board[row][col] = board[row][col];
-    }
-
-    public int[][] getBoard() {
-        return board;
-    }
-
-    public ArrayList<ArrayList<HashSet<Integer>>> getPossibleSolutionCandidates() {
-        return possibleSolutionCandidates;
-    }
-
-    public void setPossibleSolutionCandidates (ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates) {
-
-        for (int row = 0; row < possibleSolutionCandidates.size(); row++)
-            for (int col = 0; col < possibleSolutionCandidates.get(row).size(); col++)
-                this.possibleSolutionCandidates.get(row).set(col, possibleSolutionCandidates.get(row).get(col));
-
-    }
-
-    public void trySolve() {
-
-        removeTrivalImpossibleSolutions();
-        fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells();
-
-        HashMap<Integer, ArrayList<CellIndex>> solutionsWhichCanOnlyBeFilledInOneCell = findSolutionsWhichCanOnlyBeFilledInOneCell();
+        HashMap<Integer, ArrayList<CellIndex>> solutionsWhichCanOnlyBeFilledInOneCell = findSolutionsWhichCanOnlyBeFilledInOneCell(board, possibleSolutionCandidates);
 
         while (!solutionsWhichCanOnlyBeFilledInOneCell.isEmpty()) {
 
@@ -51,18 +21,18 @@ public class ExactTechniques {
                 for (CellIndex cellIndex : cellIndicesForThisSolutiion) {
                     board[cellIndex.getRow()][cellIndex.getCol()] = solution;
                     possibleSolutionCandidates.get(cellIndex.getRow()).get(cellIndex.getCol()).clear();
-                    removeThisCellsSolutionFromAllSolutionSetsOfItsRelations(cellIndex.getRow(), cellIndex.getCol());
+                    removeThisCellsSolutionFromAllSolutionSetsOfItsRelations(board, possibleSolutionCandidates, cellIndex.getRow(), cellIndex.getCol());
                 }
             }
 
-            fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells();
+            fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells(board, possibleSolutionCandidates);
 
-            solutionsWhichCanOnlyBeFilledInOneCell = findSolutionsWhichCanOnlyBeFilledInOneCell();
+            solutionsWhichCanOnlyBeFilledInOneCell = findSolutionsWhichCanOnlyBeFilledInOneCell(board, possibleSolutionCandidates);
         }
     }
 
 
-    public HashMap<Integer, ArrayList<CellIndex>> findTrivialImpossibleSolutionCandidates() {
+    public static HashMap<Integer, ArrayList<CellIndex>> findTrivialImpossibleSolutionCandidates(int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates) {
 
         HashMap<Integer, ArrayList<CellIndex>> trivialImpossibleSolutionCandidates = new HashMap<>();
 
@@ -84,9 +54,9 @@ public class ExactTechniques {
         return trivialImpossibleSolutionCandidates;
     }
 
-    public void fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells() {
+    public static void fillInCellsWhichHaveOnlyOnePossibleSolutiomAndRemoveTheseSolutiomValuesFromAllRelationsOfTheseCells(int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates) {
 
-        ArrayList<CellIndex> cellIndicesWithOnlyOnePossibleSolution = findAllCellsWhichHaveOnlyOnePossibleSolution();
+        ArrayList<CellIndex> cellIndicesWithOnlyOnePossibleSolution = findAllCellsWhichHaveOnlyOnePossibleSolution(board, possibleSolutionCandidates);
         while (!cellIndicesWithOnlyOnePossibleSolution.isEmpty()) {
 
             for (CellIndex cellIndex : cellIndicesWithOnlyOnePossibleSolution) {
@@ -99,24 +69,24 @@ public class ExactTechniques {
                 possibleSolutionCandidates.get(cellIndex.getRow()).get(cellIndex.getCol()).clear();
 
                 // remove this cells solution value from all solutions sets of its relations
-                removeThisCellsSolutionFromAllSolutionSetsOfItsRelations(cellIndex.getRow(), cellIndex.getCol());
+                removeThisCellsSolutionFromAllSolutionSetsOfItsRelations(board, possibleSolutionCandidates, cellIndex.getRow(), cellIndex.getCol());
             }
 
             // some possible solutions could have been removed from various unfilled cells, which
             // may leave some cells with only one solution, so that we can fill them in in the next loop
-            cellIndicesWithOnlyOnePossibleSolution = findAllCellsWhichHaveOnlyOnePossibleSolution();
+            cellIndicesWithOnlyOnePossibleSolution = findAllCellsWhichHaveOnlyOnePossibleSolution(board, possibleSolutionCandidates);
         }
 
     }
 
-    public void removeTrivalImpossibleSolutions () {
+    public static void removeTrivalImpossibleSolutions (int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates) {
 
         for (int row = 0; row < boardWithAndHeight; row++)
             for (int col = 0; col < boardWithAndHeight; col++)
-                removeThisCellsSolutionFromAllSolutionSetsOfItsRelations(row, col);
+                removeThisCellsSolutionFromAllSolutionSetsOfItsRelations(board, possibleSolutionCandidates, row, col);
     }
 
-    public void removeThisCellsSolutionFromAllSolutionSetsOfItsRelations(int cellRow, int cellCol) {
+    public static void removeThisCellsSolutionFromAllSolutionSetsOfItsRelations(int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates, int cellRow, int cellCol) {
 
         // if cell isn't blank (there is a number already filled in this cell)
         if (board[cellRow][cellCol] != -1) {
@@ -146,25 +116,24 @@ public class ExactTechniques {
         }
     }
 
-
-    public ArrayList<CellIndex> findAllCellsWhichHaveOnlyOnePossibleSolution() {
+    public static ArrayList<CellIndex> findAllCellsWhichHaveOnlyOnePossibleSolution(int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates) {
 
         ArrayList<CellIndex> cellIndicesWithOnlyOnePossibleSolutiom = new ArrayList<>();
 
         for (int row = 0; row < boardWithAndHeight; row++)
             for (int col = 0; col < boardWithAndHeight; col++)
-                if (board[row][col] == -1 && possibleSolutionCandidates.get(row).get(col).size() == 1) {
-                    cellIndicesWithOnlyOnePossibleSolutiom.add(new CellIndex(row, col));}
+                if (board[row][col] == -1 && possibleSolutionCandidates.get(row).get(col).size() == 1)
+                    cellIndicesWithOnlyOnePossibleSolutiom.add(new CellIndex(row, col));
 
         return cellIndicesWithOnlyOnePossibleSolutiom;
     }
 
-    public HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCellUsingRows() {
+    public static HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCellUsingRows(int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates) {
 
         HashMap<Integer, ArrayList<CellIndex>> totalSolutionsWhichCanOnlyBeFilledInOneCellUsingRows = new HashMap<>();
 
         for (int row = 0; row < boardWithAndHeight; row++) {
-            HashMap<Integer, ArrayList<CellIndex>> solutionsFoundInThisRow = findSolutionsWhichCanOnlyBeFilledInOneCellInThisRow(row);
+            HashMap<Integer, ArrayList<CellIndex>> solutionsFoundInThisRow = findSolutionsWhichCanOnlyBeFilledInOneCellInThisRow(board, possibleSolutionCandidates, row);
             for (int solution : solutionsFoundInThisRow.keySet()) {
                 if (totalSolutionsWhichCanOnlyBeFilledInOneCellUsingRows.containsKey(solution))
                     totalSolutionsWhichCanOnlyBeFilledInOneCellUsingRows.get(solution).addAll(solutionsFoundInThisRow.get(solution));
@@ -175,7 +144,7 @@ public class ExactTechniques {
         return totalSolutionsWhichCanOnlyBeFilledInOneCellUsingRows;
     }
 
-    public HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCellInThisRow (int row) {
+    public static HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCellInThisRow (int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates, int row) {
 
         HashMap<Integer, ArrayList<CellIndex>> solutionsInThisRowWhichCanOnlyBeFilledInOneCell = new HashMap<>();
 
@@ -216,12 +185,12 @@ public class ExactTechniques {
     }
 
 
-    public HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCellUsingColumns() {
+    public static HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCellUsingColumns(int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates) {
 
         HashMap<Integer, ArrayList<CellIndex>> totalSolutionsUsingsColumns = new HashMap<>();
 
         for (int col = 0; col < boardWithAndHeight; col++) {
-            HashMap<Integer, ArrayList<CellIndex>> solutionsFoundInThisRow = findSolutionsWhichCanOnlyBeFilledInOneCellInThisCol(col);
+            HashMap<Integer, ArrayList<CellIndex>> solutionsFoundInThisRow = findSolutionsWhichCanOnlyBeFilledInOneCellInThisCol(board, possibleSolutionCandidates, col);
             for (int solution : solutionsFoundInThisRow.keySet()) {
                 if (totalSolutionsUsingsColumns.containsKey(solution))
                     totalSolutionsUsingsColumns.get(solution).addAll(solutionsFoundInThisRow.get(solution));
@@ -232,7 +201,7 @@ public class ExactTechniques {
         return totalSolutionsUsingsColumns;
     }
 
-    public HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCellInThisCol (int col) {
+    public static HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCellInThisCol (int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates, int col) {
 
         HashMap<Integer, ArrayList<CellIndex>> solutionsInThisColumnWhichCanOnlyBeFilledInOneCell = new HashMap<>();
 
@@ -272,13 +241,13 @@ public class ExactTechniques {
         return solutionsInThisColumnWhichCanOnlyBeFilledInOneCell;
     }
 
-    public HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCell() {
+    public static HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCell(int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates) {
 
         HashMap<Integer, ArrayList<CellIndex>> totalSolutionsWhichCanOnlyBeFilledInOneCell = new HashMap<>();
 
-        HashMap<Integer, ArrayList<CellIndex>> solutionsUsingBlocks = findSolutionsWhichCanOnlyBeFilledInOneCellUsingBlocks();
-        HashMap<Integer, ArrayList<CellIndex>> solutionsUsingRows = findSolutionsWhichCanOnlyBeFilledInOneCellUsingRows();
-        HashMap<Integer, ArrayList<CellIndex>> solutionsUsingColumns = findSolutionsWhichCanOnlyBeFilledInOneCellUsingColumns();
+        HashMap<Integer, ArrayList<CellIndex>> solutionsUsingBlocks = findSolutionsWhichCanOnlyBeFilledInOneCellUsingBlocks(board, possibleSolutionCandidates);
+        HashMap<Integer, ArrayList<CellIndex>> solutionsUsingRows = findSolutionsWhichCanOnlyBeFilledInOneCellUsingRows(board, possibleSolutionCandidates);
+        HashMap<Integer, ArrayList<CellIndex>> solutionsUsingColumns = findSolutionsWhichCanOnlyBeFilledInOneCellUsingColumns(board, possibleSolutionCandidates);
 
         GeneralHelpers.addAll(totalSolutionsWhichCanOnlyBeFilledInOneCell, solutionsUsingBlocks);
         GeneralHelpers.addAll(totalSolutionsWhichCanOnlyBeFilledInOneCell, solutionsUsingRows);
@@ -288,7 +257,7 @@ public class ExactTechniques {
     }
 
 
-    public HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCellUsingBlocks() {
+    public static HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCellUsingBlocks(int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates) {
 
         HashMap<Integer, ArrayList<CellIndex>> totalSolutionsWhichCanOnlyBeFilledInOneCellUsingBlocks = new HashMap<>();
 
@@ -305,7 +274,7 @@ public class ExactTechniques {
                 currBlockRange.setEndCol(startCol + 3 - 1);
 
                 HashMap<Integer, ArrayList<CellIndex>> solutionsWhichCanOnlyBeFilledInOneCellFoundInThisBlock
-                        = findSolutionsWhichCanOnlyBeFilledInOneCellInThisBlock(currBlockRange);
+                        = findSolutionsWhichCanOnlyBeFilledInOneCellInThisBlock(board, possibleSolutionCandidates, currBlockRange);
 
                 for (int solution : solutionsWhichCanOnlyBeFilledInOneCellFoundInThisBlock.keySet()) {
 
@@ -322,7 +291,7 @@ public class ExactTechniques {
         return totalSolutionsWhichCanOnlyBeFilledInOneCellUsingBlocks;
     }
 
-    public HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCellInThisBlock (SubRange blockRange) {
+    public static HashMap<Integer, ArrayList<CellIndex>> findSolutionsWhichCanOnlyBeFilledInOneCellInThisBlock (int[][] board, ArrayList<ArrayList<HashSet<Integer>>> possibleSolutionCandidates, SubRange blockRange) {
 
         HashMap<Integer, ArrayList<CellIndex>> solutionsWhichCanOnlyBeFilledInOneCell = new HashMap<>();
 
